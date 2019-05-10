@@ -1,0 +1,34 @@
+{:paths ["resources" "src"]
+ :deps  {org.clojure/clojure         {:mvn/version "1.10.1"}
+         com.cognitect/fern          {:git/url "https://github.com/cognitect-labs/fern.git"
+                                      :sha     "2afdb4f300d1458fc734d5c98ebcfeb89802b0e1"}
+         com.cognitect/pedestal.vase {:git/url    "https://github.com/cognitect-labs/vase"
+                                      :sha        "d882bc8f28e8af2077b55c80e069aa2238f646b7"
+                                      :exclusions [org.slf4j/slf4j-nop]}
+         cc.qbits/spandex            {:mvn/version "0.7.6"}
+         org.clojure/core.match      {:mvn/version "1.0.0"}
+         io.pedestal/pedestal.log    {:mvn/version "0.5.7"}}
+
+ :aliases
+ {:test
+  {:extra-paths ["test" "dev"]
+   :extra-deps  {org.clojure/test.check                  {:mvn/version "0.10.0"}
+                 lambdaisland/kaocha                     {:mvn/version "1.0.641"}
+                 lambdaisland/kaocha-cloverage           {:mvn/version "1.0-45"}
+                 clj-test-containers/clj-test-containers {:mvn/version "0.4.0"}
+                 clj-http/clj-http                       {:mvn/version "3.10.0"}
+                 ch.qos.logback/logback-classic          {:mvn/version "1.2.3" :exclusions [org.slf4j/slf4j-api]}
+                 org.slf4j/jul-to-slf4j                  {:mvn/version "1.7.25"}
+                 org.slf4j/jcl-over-slf4j                {:mvn/version "1.7.25"}
+                 org.slf4j/log4j-over-slf4j              {:mvn/version "1.7.25"}}}
+
+  :jar
+  {:extra-deps {seancorfield/depstar {:mvn/version "0.2.1"}}}
+
+  :release
+  {:extra-deps {com.workframe/garamond {:mvn/version "0.4.0"}}
+   :main-opts  ["-m" "garamond.main"]}
+
+  :service {:main-opts ["-m" "com.cognitect.vase.main" "dev/tmdb.fern"]}
+
+  :index {:main-opts ["-m" "user"]}}}

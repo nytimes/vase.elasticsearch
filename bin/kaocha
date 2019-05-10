@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ "true" == "${DRONE}" ]; then
+    echo "Running on Drone. Using local .deps directory."
+    clojure -Sdeps '{:mvn/local-repo ".deps"}' -A:test -m kaocha.runner "$@"
+else
+    clojure -M:test -m kaocha.runner "$@"
+fi

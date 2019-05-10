@@ -1,0 +1,112 @@
+{
+    "settings": {
+        "index": {
+            "number_of_shards": 2
+        },
+        "analysis": {
+            "filter": {
+                "bigram_filter": {
+                    "output_unigrams": false,
+                    "min_shingle_size": 2,
+                    "max_shingle_size": 2,
+                    "type": "shingle"
+                }
+            },
+            "analyzer": {
+                "english_bigrams": {
+                    "filter": [
+                        "lowercase",
+                        "porter_stem",
+                        "bigram_filter"
+                    ],
+                    "tokenizer": "standard",
+                    "type": "custom"
+                }
+            }
+        }
+    },
+    "mappings": {
+        "properties": {
+            "names_exact_match": {
+                "analyzer": "english",
+                "type": "text"
+            },
+            "title_exact_match": {
+                "analyzer": "english",
+                "type": "text"
+            },
+            "title": {
+                "analyzer": "english",
+                "type": "text"
+            },
+            "release_date": {
+                "format": "yyyy-MM-dd",
+                "type": "date"
+            },
+            "overview": {
+                "analyzer": "english",
+                "type": "text"
+            },
+            "directors": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "fields": {
+                            "bigrammed": {
+                                "type": "text",
+                                "analyzer": "english_bigrams"
+                            }
+                        },
+                        "analyzer": "english",
+                        "type": "text"
+                    },
+                    "cast_id": {
+                        "type": "keyword"
+                    },
+                    "credit_id": {
+                        "type": "keyword"
+                    },
+                    "gender": {
+                        "type": "keyword"
+                    },
+                    "order": {
+                        "type": "long"
+                    },
+                    "profile_path": {
+                        "type": "keyword"
+                    }
+                }
+            },
+            "cast": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "fields": {
+                            "bigrammed": {
+                                "type": "text",
+                                "analyzer": "english_bigrams"
+                            }
+                        },
+                        "analyzer": "english",
+                        "type": "text"
+                    },
+                    "cast_id": {
+                        "type": "keyword"
+                    },
+                    "credit_id": {
+                        "type": "keyword"
+                    },
+                    "gender": {
+                        "type": "keyword"
+                    },
+                    "order": {
+                        "type": "long"
+                    },
+                    "profile_path": {
+                        "type": "keyword"
+                    }
+                }
+            }
+        }
+    }
+}

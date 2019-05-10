@@ -1,0 +1,110 @@
+{vase/plugins    [com.nytimes.vase.elasticsearch]
+
+ vase/service    (fern/lit vase/service
+                           {:apis       [@tmdb/docs-api
+                                         @tmdb/api]
+                            :service-map {:io.pedestal.http/resource-path  "/public"
+                                          :io.pedestal.http/port           8080
+                                          :io.pedestal.http/join?          false
+                                          :io.pedestal.http/secure-headers {:content-security-policy-settings
+                                                                            {:object-src "none"}}}})
+ elasticsearch   (fern/lit vase.elasticsearch/connect
+                           {:hosts ["http://localhost:9200"
+                                    "http://localhost:9201"]})
+
+ index           "tmdb"
+
+ ;; ----------------------------------------------------------------------
+ ;; CRUD Operations
+
+ create-index    (fern/lit vase.elasticsearch/create
+                           {:name     :tmdbc/create-index
+                            :index    @index
+                            :settings "dev/settings.json"})
+
+ tmdb/docs-api   (fern/lit vase/api
+                           {:path       "/doc"
+                            :on-startup [@elasticsearch @create-index]
+                            :on-request [@elasticsearch io.pedestal.http/json-body]
+                            :routes     #{["/:id" :get    [@tmdb/get-doc]    :get-document]
+                                          ["/:id" :put    [@tmdb/put-doc]    :put-document]
+                                          ["/:id" :delete [@tmdb/delete-doc] :delete-document]}})
+
+ tmdb/get-doc (fern/lit vase.elasticsearch/get-document
+                           {:name    :tmdb/get-document
+                            :index   @index
+                            :type    :_doc
+                            :id-path [:request :path-params :id]})
+
+ tmdb/put-doc    (fern/lit vase.elasticsearch/put-document
+                           {:name      :tmdb/put-document
+                            :index     @index
+                            :type      :_doc
+                            :id-path   [:request :path-params :id]
+                            :body-path [:request :body]})
+
+ tmdb/delete-doc (fern/lit vase.elasticsearch/delete-document
+                           {:name    :tmdb/delete-document
+                            :index   @index
+                            :type    :_doc
+                            :id-path [:request :path-params :id]})
+
+ ;; ----------------------------------------------------------------------
+ ;; Search
+
+ tmdb/api        (fern/lit vase/api
+                           {:path       "/"
+                            :on-startup [@elasticsearch @create-index]
+                            :on-request [@elasticsearch
+                                         io.pedestal.http/json-body]
+                            :routes     #{["/search"    :get    [@tmdb/search]]
+                                          ["/not-found" :get    [@tmdb/not-found]]
+                                          ["/bad-query" :get    [@tmdb/bad-query]]}})
+
+ tmdb/search     (fern/lit vase.elasticsearch/search
+                           {:name   :tmdb/search
+                            :index  @index
+                            :params [q dbg]
+                            :body   {:_source [:title :release_date]
+                                     :explain (or dbg false)
+                                     :query   (let [q (or q "")]
+                                                {:bool
+                                                 {:should
+                                                  [;; SHOULD have all the user’s query terms match somewhere in the document
+                                                   {:multi_match {:query q
+                                                                  :fields ["overview"
+                                                                           "title"
+                                                                           "directors.name"
+                                                                           "cast.name"]
+                                                                  :type   :cross_fields}}
+
+                                                   ;; SHOULD have full query exactly matching the title
+                                                   {:match_phrase {"title_exact_match" {:query (str "|" q "|")}}}
+
+
+                                                   ;; SHOULD have part of the query match a director’s or cast member’s full name
+                                                   {:multi_match
+                                                    {:query q
+                                                     :fields ["directors.name.bigrammed"
+                                                              "cast.name.bigrammed"]}}
+
+                                                   ;; SHOULD have full query, exactly matching a director’s or cast member’s full name, scored by popularity and recency
+                                                   {:function_score
+                                                    {:query {:match_phrase {"names_exact_match" (str "|" q "|")}}
+                                                     :functions
+                                                     [{:field_value_factor {:field "vote_average" :modifier "sqrt"}}
+                                                      {:gauss {"release_date" {:origin "now" :scale "5500d" :decay 0.5}}}]}}]}})}})
+
+ tmdb/not-found  (fern/lit vase.elasticsearch/request
+                             {:name   :tmdb/not-found
+                              :params []
+                              :url    [:does-not-exist :_search]
+                              :method :get
+                              :body   {:query {:match_all {}}}})
+
+ tmdb/bad-query  (fern/lit vase.elasticsearch/request
+                             {:name   :tmdb/bad-query
+                              :params []
+                              :url    [:tmdb :_search]
+                              :method :get
+                              :body   {:query {:match_all {:this-field-is "an error"}}}})}

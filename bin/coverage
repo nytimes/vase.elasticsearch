@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+repo_token=$REPO_TOKEN
+gitdata=$(git log -n1 --pretty=format:'
+{
+    "remotes": [
+        {
+            "url": "git@github.com:nytimes/vase.elasticsearch.git",
+            "name": "origin"
+        }
+    ],
+    "branch": "master",
+    "head": {
+        "message": "%s",
+        "committer_email": "%aE",
+        "committer_name": "%aN",
+        "author_email": "%aE",
+        "author_name": "%aN",
+        "id": "%H"
+    }
+}')
+
+
+jq ". += {\"repo_token\": \"${repo_token}\", \"git\": ${gitdata}}" target/coverage/coveralls.json > target/coverage/coveralls-full.json
+curl -XPOST 'https://coveralls.io/api/v1/jobs' \
+     --form 'json_file=@"target/coverage/coveralls-full.json"'

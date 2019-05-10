@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.nytimes</groupId>
+  <artifactId>vase.elasticsearch</artifactId>
+  <version>0.7.0</version>
+
+  <name>vase.elasticsearch</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.clojure</groupId>
+      <artifactId>clojure</artifactId>
+      <version>1.10.1</version>
+    </dependency>
+    <dependency>
+      <groupId>cc.qbits</groupId>
+      <artifactId>spandex</artifactId>
+      <version>0.7.6</version>
+    </dependency>
+    <dependency>
+      <groupId>org.clojure</groupId>
+      <artifactId>core.match</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>io.pedestal</groupId>
+      <artifactId>pedestal.log</artifactId>
+      <version>0.5.7</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <sourceDirectory>resources</sourceDirectory>
+  </build>
+
+  <repositories>
+    <repository>
+      <id>clojars</id>
+      <url>https://repo.clojars.org/</url>
+    </repository>
+  </repositories>
+
+<scm>
+    <url/>
+    <tag>a47841d33de9e8b2fd5a37fde9f0f922bdc78768</tag>
+    <connection>scm:git:git@github.com:nytimes/vase.elasticsearch.git</connection>
+    <developerConnection>scm:git:git@github.com:nytimes/vase.elasticsearch.git</developerConnection>
+  </scm>
+</project>
