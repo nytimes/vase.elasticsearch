@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-JAR := vase.elasticsearch.jar
+JAR := vase-elasticsearch.jar
 
 help: ## Display this help section
 	@awk 'BEGIN {FS = ":.*?## "} /^[\/a-zA-Z0-9_-]+:.*?## / {printf "\033[36m%-45s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
