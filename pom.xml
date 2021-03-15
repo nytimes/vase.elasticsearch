@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.nytimes</groupId>
   <artifactId>vase.elasticsearch</artifactId>
-  <version>0.7.0</version>
+  <version>0.0.2</version>
 
   <name>vase.elasticsearch</name>
   <dependencies>
@@ -42,7 +42,7 @@
 
 <scm>
     <url/>
-    <tag>a47841d33de9e8b2fd5a37fde9f0f922bdc78768</tag>
+    <tag>e820c6266d8d65fca1517c2b1ae9a57a4caf33f4</tag>
     <connection>scm:git:git@github.com:nytimes/vase.elasticsearch.git</connection>
     <developerConnection>scm:git:git@github.com:nytimes/vase.elasticsearch.git</developerConnection>
   </scm>
