@@ -10,25 +10,29 @@
          io.pedestal/pedestal.log    {:mvn/version "0.5.7"}}
 
  :aliases
- {:test
-  {:extra-paths ["test" "dev"]
-   :extra-deps  {org.clojure/test.check                  {:mvn/version "0.10.0"}
-                 lambdaisland/kaocha                     {:mvn/version "1.0.641"}
-                 lambdaisland/kaocha-cloverage           {:mvn/version "1.0-45"}
-                 clj-test-containers/clj-test-containers {:mvn/version "0.4.0"}
-                 clj-http/clj-http                       {:mvn/version "3.10.0"}
-                 ch.qos.logback/logback-classic          {:mvn/version "1.2.3" :exclusions [org.slf4j/slf4j-api]}
-                 org.slf4j/jul-to-slf4j                  {:mvn/version "1.7.25"}
-                 org.slf4j/jcl-over-slf4j                {:mvn/version "1.7.25"}
-                 org.slf4j/log4j-over-slf4j              {:mvn/version "1.7.25"}}}
-
-  :jar
-  {:extra-deps {seancorfield/depstar {:mvn/version "0.2.1"}}}
-
-  :release
-  {:extra-deps {com.workframe/garamond {:mvn/version "0.4.0"}}
-   :main-opts  ["-m" "garamond.main"]}
+ {:test    {:extra-paths ["test" "dev"]
+            :extra-deps  {org.clojure/test.check                  {:mvn/version "0.10.0"}
+                          lambdaisland/kaocha                     {:mvn/version "1.0.641"}
+                          lambdaisland/kaocha-cloverage           {:mvn/version "1.0-45"}
+                          clj-test-containers/clj-test-containers {:mvn/version "0.4.0"}
+                          clj-http/clj-http                       {:mvn/version "3.10.0"}
+                          ch.qos.logback/logback-classic          {:mvn/version "1.2.3" :exclusions [org.slf4j/slf4j-api]}
+                          org.slf4j/jul-to-slf4j                  {:mvn/version "1.7.25"}
+                          org.slf4j/jcl-over-slf4j                {:mvn/version "1.7.25"}
+                          org.slf4j/log4j-over-slf4j              {:mvn/version "1.7.25"}}}
 
   :service {:main-opts ["-m" "com.cognitect.vase.main" "dev/tmdb.fern"]}
 
-  :index {:main-opts ["-m" "user"]}}}
+  :index   {:main-opts ["-m" "user"]}
+
+  :depstar {:replace-deps {com.github.seancorfield/depstar {:mvn/version "2.0.193"}}
+            :ns-default   hf.depstar
+            :exec-args    {}}  
+
+  :release {:extra-deps {com.workframe/garamond {:mvn/version "0.4.0"}}
+            :main-opts  ["-m" "garamond.main"]}
+
+  :deploy  {:extra-deps {slipset/deps-deploy {:mvn/version "0.1.5"}}
+            :exec-fn    deps-deploy.deps-deploy/deploy
+            :exec-args  {:installer :remote
+                         :artifact  "vase-elasticsearch.jar"}}}}
